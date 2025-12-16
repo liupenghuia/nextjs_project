@@ -12,7 +12,7 @@ export default function Home() {
       const res = await fetch('/api/hello');
       const data = await res.json();
       setContent(`消息: ${data.message} | 时间: ${data.time} | 幸运数字: ${data.luckyNumber}`);
-    } catch (error) {
+    } catch {
       setContent("出错了！");
     }
     setLoading(false);
