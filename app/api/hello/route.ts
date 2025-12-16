@@ -13,3 +13,6 @@ export async function GET() {
   // 把对象变成 JSON 返回回去
   return NextResponse.json(data);
 }
+
+// 确保 API 路由在构建时被正确识别
+export const dynamic = 'force-dynamic';
