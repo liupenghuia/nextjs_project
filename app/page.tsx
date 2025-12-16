@@ -1,65 +1,83 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from 'react';
 
 export default function Home() {
+  const [content, setContent] = useState<string>("等待加载...");
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/hello');
+      const data = await res.json();
+      setContent(`消息: ${data.message} | 时间: ${data.time} | 幸运数字: ${data.luckyNumber}`);
+    } catch (error) {
+      setContent("出错了！");
+    }
+    setLoading(false);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    // 1. 最外层容器
+    // min-h-screen: 最小高度占满屏幕
+    // p-4: 手机上内边距小点
+    // md:p-24: 电脑(md及以上)内边距大点
+    // bg-gray-100: 浅灰色背景
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 md:p-24 bg-gray-100">
+      
+      {/* 2. 标题区 */}
+      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
+        {/* text-3xl: 手机字体大 */}
+        {/* md:text-5xl: 电脑字体超级大 */}
+        {/* mb-8: 底部留白 */}
+        <h1 className="text-3xl md:text-5xl font-bold text-center mb-8 text-blue-600">
+          全栈 Demo
+        </h1>
+      </div>
+
+      {/* 3. 内容卡片 */}
+      {/* w-full: 手机上占满宽度 */}
+      {/* max-w-md: 电脑上限制最大宽度，不至于太宽 */}
+      {/* bg-white: 白底 */}
+      {/* rounded-xl: 圆角 */}
+      {/* shadow-md: 阴影 */}
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
+        
+        {/* 卡片内容区 */}
+        <div className="p-8">
+          <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+            服务器响应
+          </div>
+          
+          {/* break-words: 防止手机上文字太长撑破容器 */}
+          <p className="mt-2 text-slate-500 break-words">
+            {content}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* 按钮区 */}
+        <div className="bg-gray-50 px-8 py-4">
+          <button 
+            onClick={fetchData}
+            disabled={loading}
+            // active:scale-95: 点击时有个缩小的动画，手机上手感很好
+            // transition: 动画过渡
+            // w-full: 手机上按钮通常要通栏，方便手指点击
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
+              ${loading ? 'bg-gray-400' : 'bg-indigo-600 hover:bg-indigo-700'} 
+              transition duration-150 ease-in-out active:scale-95 text-lg`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {loading ? '加载中...' : '点击呼叫后端'}
+          </button>
         </div>
-      </main>
-    </div>
+      </div>
+
+      {/* 4. 底部补充信息 */}
+      <div className="mt-8 text-center text-gray-400 text-sm">
+        <p>试着改变浏览器窗口大小看看效果</p>
+      </div>
+
+    </main>
   );
 }
